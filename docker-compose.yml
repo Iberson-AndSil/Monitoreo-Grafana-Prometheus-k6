@@ -1,0 +1,36 @@
+version: "3"
+services:
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus_data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    networks:
+      - localprom
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana_data:/var/lib/grafana
+    networks:
+      - localprom
+    depends_on:
+      - prometheus
+
+  k6:
+    image: grafana/k6
+    volumes:
+      - ./:/load-testing  # Montamos toda la carpeta del proyecto en el contenedor
+    command: ["run", "/load-testing/load-test.js"]
+    networks:
+      - localprom
+
+networks:
+  localprom:
+    driver: bridge

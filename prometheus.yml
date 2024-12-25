@@ -1,0 +1,20 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: "prometheus_service"
+    static_configs:
+      - targets: ["host.docker.internal:9090"] # Windows
+      # - targets: ["docker.for.mac.localhost:9090"] # macOs
+
+  - job_name: "nodejs_service"
+    static_configs:
+      - targets: ["host.docker.internal:3002"] # Windows
+      # - targets: ["docker.for.mac.localhost:9090"] # macOs
+  
+  - job_name: "k6"
+    static_configs:
+      - targets: ["host.docker.internal:6565"]  # K6 Metrics port
+
+rule_files:
+  - "alerts.yml"
